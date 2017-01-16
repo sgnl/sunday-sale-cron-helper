@@ -7,7 +7,7 @@ const moment = require('moment');
 const CONFIG = require('../config');
 const logger = require('./logger');
 
-mongoose.connect(`mongodb://${CONFIG.MONGO_USER}:${CONFIG.MONGO_PASSWORD}@${CONFIG.MONGO_URL}`);
+mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}`);
 mongoose.Promise = Promise;
 
 const Schema = mongoose.Schema;
