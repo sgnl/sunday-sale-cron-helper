@@ -1,0 +1,20 @@
+{
+  "name": "longs_sunday_sale_cron_aws_lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Ray Farias <rayrfarias@gmail.com> (http://github.com/sgnl)",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "got": "^6.7.1",
+    "moment": "^2.17.1",
+    "mongoose": "^4.7.7",
+    "sendgrid": "^4.7.1",
+    "winston": "^2.3.0"
+  }
+}
