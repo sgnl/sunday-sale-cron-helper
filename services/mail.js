@@ -1,16 +1,19 @@
+#!/usr/bin/env node
 
 'use strict';
-/* eslint new-cap: "off" */
 
+/* eslint new-cap: "off" */
 const SendGrid = require('sendgrid');
 
 const CONFIG = require('../config');
 const logger = require('./logger');
 
-const SendGridService  = SendGrid(CONFIG.SENDGRID_API_KEY);
+const SendGridService = SendGrid(CONFIG.SENDGRID_API_KEY);
 
 function getEmailsAndSendNewsletter({url}) {
-  if (!url) throw Error('cannot send newsletter withour brochure url');
+  if (!url) {
+    throw new Error('cannot send newsletter withour brochure url');
+  }
 
   const request = SendGridService.emptyRequest({
     method: 'GET',
@@ -22,16 +25,17 @@ function getEmailsAndSendNewsletter({url}) {
   return SendGridService.API(request)
     .then(response => {
       logger.info('response from sendgrid', response);
-      return response.body.recipients.map(recep => recep.email)
+      return response.body.recipients.map(recep => recep.email);
     })
     .then(createCampaign(url))
     .then(campaignId => activateCampaign(campaignId));
 }
 
 function createCampaign(url) {
-  return (emails) => {
+  return () => {
     logger.info('building new campaign specifications');
 
+    /* eslint camelcase: "off" */
     const request = SendGridService.emptyRequest({
       method: 'POST',
       path: '/v3/campaigns',
@@ -39,7 +43,7 @@ function createCampaign(url) {
         title: 'YOUR SUNDAY SALE TITLE',
         subject: 'Your Sunday Sale newletter has arrived!',
         sender_id: 98524,
-        list_ids: [787192 ],
+        list_ids: [787192],
         suppression_group_id: 1925,
         custom_unsubscribe_url: '',
         html_content: `<html><head><title></title></head><body><p>click here to visit the url: <a href="${url}">${url}<a/></p><p><a href="[unsubscribe]">Unsubscribe from this newsletter</a></p></body></html>`,
@@ -70,4 +74,4 @@ function activateCampaign(id) {
     });
 }
 
-module.exports = { getEmailsAndSendNewsletter };
+module.exports = {getEmailsAndSendNewsletter};
