@@ -23,7 +23,6 @@ const brochureSchema = new Schema({
     type: Date,
     default() { return new Date(); }
   }
-  // clicks: {type: Number, default: 0} TODO
 });
 
 const Brochure = mongoose.model('Brochure', brochureSchema);
