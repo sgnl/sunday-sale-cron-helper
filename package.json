@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "xo"
+    "test": "xo",
+    "start": "env $(cat .env) node index.js $(date +'%m%d')"
   },
   "keywords": [],
   "author": "Ray Farias <rayrfarias@gmail.com> (http://github.com/sgnl)",

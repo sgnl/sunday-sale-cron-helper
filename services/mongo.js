@@ -38,12 +38,15 @@ function addNewBrochureUrl(url) {
   const newBrochureURLObject = {url};
   const upsertOptions = {upsert: true, new: true};
 
+  const newBrochure = new Brochure({url});
+
   logger.info('attempting to upsert new brochure url');
 
-  return Brochure.findOneAndUpdate(newBrochureURLObject, newBrochureURLObject, upsertOptions)
-    .then(doc => {
-      logger.info('brochure document created');
-      return doc;
+  return newBrochure.save()
+    .then(() => {
+      console.log('newBrochure: ', newBrochure);
+      logger.info('brochure document created', {doc: newBrochure._id});
+      return newBrochure;
     });
 }
 

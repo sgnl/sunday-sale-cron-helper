@@ -5,7 +5,7 @@
 const got = require('got');
 
 const {addNewBrochureUrl} = require('./services/mongo');
-const {getEmailsAndSendNewsletter} = require('./services/mail');
+const {createCampaignAndSend} = require('./services/mail');
 const logger = require('./services/logger');
 
 require('dotenv').config();
@@ -23,5 +23,5 @@ got(newBrochureURL)
 
     return addNewBrochureUrl(newBrochureURL);
   })
-  .then(doc => getEmailsAndSendNewsletter(doc))
-  .catch(logger.error);
+  .then(doc => createCampaignAndSend(doc))
+  .catch(err => logger.error(err));
