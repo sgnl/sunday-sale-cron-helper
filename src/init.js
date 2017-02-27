@@ -18,8 +18,9 @@ function init() {
 
   const monthStr = padDate(String(date.month() + 1));
   const dayStr = String(date.date());
+  const  brochureDate = monthStr + dayStr
 
-  const newBrochureURL = `http://longs.staradvertiser.com/oahu/${ monthStr + dayStr }/pdf/oahu${ monthStr + dayStr }.pdf`;
+  const newBrochureURL = `http://longs.staradvertiser.com/oahu/${ brochureDate }/pdf/oahu${ brochureDate }.pdf`;
 
   // :sparkles:
   got(newBrochureURL)

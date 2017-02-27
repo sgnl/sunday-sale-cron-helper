@@ -2,4 +2,4 @@
 
 'use strict';
 
-require('./init').init();
+exports.init = require('./dist/init').init;
