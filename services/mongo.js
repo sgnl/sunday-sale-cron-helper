@@ -21,7 +21,7 @@ var brochureSchema = new Schema({
     required: true,
     type: String,
     default: function _default() {
-      return moment().format('MMM Do YYYY');
+      return moment().day(7).format('MMM Do YYYY');
     }
   },
   created_at: {
@@ -36,15 +36,13 @@ var Brochure = mongoose.model('Brochure', brochureSchema);
 
 // upserts brochure document and then returns it
 function addNewBrochureUrl(url) {
-  var newBrochureURLObject = { url: url };
   var upsertOptions = { upsert: true, new: true };
 
   var newBrochure = new Brochure({ url: url });
 
   logger.info('attempting to upsert new brochure url');
 
-  return newBrochure.save().then(function () {
-    console.log('newBrochure: ', newBrochure);
+  return newBrochure.save(upsertOptions).then(function () {
     logger.info('brochure document created', { doc: newBrochure._id });
     return newBrochure;
   });
