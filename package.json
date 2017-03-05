@@ -1,5 +1,5 @@
 {
-  "name": "longs_sunday_sale_cron_aws_lambda",
+  "name": "longs-sunday-sale-cron",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
