@@ -12,8 +12,9 @@ const _require2 = require('./services/mail'),
 
 const islands = ['oahu', 'maui', 'kauai', 'kona', 'hilo'];
 
+let day =  7;
 // get the nearest sunday and return two-digit month and day combination
-const date = moment().day(0).format('MMDD');
+const date = moment().day(day).format('MMDD');
 
 if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
   require('dotenv').config();
@@ -21,6 +22,7 @@ if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
 
 const allBrochures = islands.map(island => {
     return {
+      date_added: moment().day(day).format('MMM Do YYYY'),
       island,
       url: `http://longs.staradvertiser.com/${island}/${date}/pdf/${island}${date}.pdf`
     };
@@ -29,16 +31,11 @@ const allBrochures = islands.map(island => {
 console.log(allBrochures)
 
 const asyncCollection = allBrochures.map(brochure => addNewBrochureUrl(brochure))
-  // .concat(createCampaignAndSend(allBrochures));
+//   // .concat(createCampaignAndSend(allBrochures));
 
-// console.log('asyncCollection: ', asyncCollection);
+// // console.log('asyncCollection: ', asyncCollection);
 
 Promise.all(asyncCollection)
   .then(() => {
     logger.info('all done \o/');
   })
-
-
-// allBrochures
-
-// createCampaignAndSend(allBrochures).catch(err => logger.error(err));
