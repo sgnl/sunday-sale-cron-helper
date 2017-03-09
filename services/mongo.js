@@ -1,21 +1,19 @@
 #!/usr/bin/env node
 
+const mongoose = require('mongoose');
+const Promise = require('bluebird');
+const moment = require('moment');
 
-'use strict';
-
-var mongoose = require('mongoose');
-var Promise = require('bluebird');
-var moment = require('moment');
-
-var logger = require('./logger');
+const logger = require('./logger');
 
 mongoose.connect('mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@' + process.env.MONGO_URL);
 mongoose.Promise = Promise;
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 /* eslint camelcase: "off" */
-var brochureSchema = new Schema({
+const brochureSchema = new Schema({
+  island: { required: true, type: String },
   url: { required: true, type: String },
   date_added: {
     required: true,
@@ -32,20 +30,20 @@ var brochureSchema = new Schema({
   }
 });
 
-var Brochure = mongoose.model('Brochure', brochureSchema);
+const Brochure = mongoose.model('Brochure', brochureSchema);
 
 // upserts brochure document and then returns it
-function addNewBrochureUrl(url) {
-  var upsertOptions = { upsert: true, new: true };
+const addNewBrochureUrl = (brochure) => {
+  const upsertOptions = { upsert: true, new: true };
 
-  var newBrochure = new Brochure({ url: url });
+  const newBrochure = new Brochure(brochure);
 
   logger.info('attempting to upsert new brochure url');
 
-  return newBrochure.save(upsertOptions).then(function () {
-    logger.info('brochure document created', { doc: newBrochure._id });
+  return newBrochure.save(upsertOptions).then(() => {
+    logger.info('brochure document created', { newBrochure });
     return newBrochure;
   });
-}
+};
 
-module.exports = { addNewBrochureUrl: addNewBrochureUrl };
+module.exports = { addNewBrochureUrl };

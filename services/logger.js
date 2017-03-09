@@ -1,8 +1,7 @@
-'use strict';
 
-var winston = require('winston');
+const winston = require('winston');
 
-var logger = new winston.Logger({
+const logger = new winston.Logger({
   transports: [new winston.transports.Console({
     handleExceptions: true,
     json: true

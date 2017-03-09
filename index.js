@@ -2,35 +2,43 @@
 
 const got = require('got');
 const moment = require('moment');
+const Promise = require('bluebird');
 
-const _require = require('./services/mongo'),
-    addNewBrochureUrl = _require.addNewBrochureUrl;
+const logger = require('./services/logger');
+const { addNewBrochureUrl } = require('./services/mongo');
 
 const _require2 = require('./services/mail'),
     createCampaignAndSend = _require2.createCampaignAndSend;
 
-const logger = require('./services/logger');
+const islands = ['oahu', 'maui', 'kauai', 'kona', 'hilo'];
 
 // get the nearest sunday and return two-digit month and day combination
-const date = moment().day(7).format('MMDD');
+const date = moment().day(0).format('MMDD');
 
 if (process.env.ENVIRONMENT === 'DEVELOPMENT') {
   require('dotenv').config();
 }
 
-const newBrochureURL = `http://longs.staradvertiser.com/oahu/${date}/pdf/oahu${date}.pdf`;
+const allBrochures = islands.map(island => {
+    return {
+      island,
+      url: `http://longs.staradvertiser.com/${island}/${date}/pdf/${island}${date}.pdf`
+    };
+  })
 
-// :sparkles:
-got(newBrochureURL).then(function (res) {
-  if (res.statusCode !== 200) {
-    throw new Error('Status was not 200, instead: ', res.statusCode);
-  }
+console.log(allBrochures)
 
-  logger.info('success fetching new brochure url', { newBrochureURL: newBrochureURL });
+const asyncCollection = allBrochures.map(brochure => addNewBrochureUrl(brochure))
+  // .concat(createCampaignAndSend(allBrochures));
 
-  return addNewBrochureUrl(newBrochureURL);
-}).then(function (doc) {
-  return createCampaignAndSend(doc);
-}).catch(function (err) {
-  return logger.error(err);
-});
+// console.log('asyncCollection: ', asyncCollection);
+
+Promise.all(asyncCollection)
+  .then(() => {
+    logger.info('all done \o/');
+  })
+
+
+// allBrochures
+
+// createCampaignAndSend(allBrochures).catch(err => logger.error(err));

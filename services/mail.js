@@ -1,63 +1,62 @@
 #!/usr/bin/env node
 
-
-'use strict';
-
 /* eslint new-cap: "off" */
 
-var SendGrid = require('sendgrid');
+const SendGrid = require('sendgrid');
 
-// const CONFIG = require('../config');
-var logger = require('./logger');
+const logger = require('./logger');
 
-var SendGridService = SendGrid(process.env.SENDGRID_API_KEY);
-
-function createCampaignAndSend(_ref) {
-  var url = _ref.url;
-
-  return createCampaign(url).then(function (campaignId) {
-    return activateCampaign(campaignId);
-  });
-}
+const SendGridService = SendGrid(process.env.SENDGRID_API_KEY);
 
 // creates new campaign on sendgrid and returns `campaignId`
-function createCampaign(url) {
+const createCampaign = allBrochures => {
   logger.info('building new campaign specifications');
 
+  const brochureListHTMLString = allBrochures.map(brochure => {
+    return `<li><a href="${brochure.url}">${brochure.island} - ${brochure.url}</a></li>`
+  }).join('');
+
+  const plainContent = allBrochures.map(brochure => {
+    return `${brochure.island} - ${brochure.url}`;
+  }).join(', ');
+
   /* eslint camelcase: "off" */
-  var request = SendGridService.emptyRequest({
+  const request = SendGridService.emptyRequest({
     method: 'POST',
     path: '/v3/campaigns',
     body: {
       title: 'YOUR SUNDAY SALE TITLE',
       subject: 'Your Sunday Sale newletter has arrived!',
       sender_id: 98524,
-      list_ids: [787187],
+      list_ids: [787192], // debug
+      // list_ids: [787187],
       suppression_group_id: 1925,
       custom_unsubscribe_url: '',
-      html_content: '<html><head><title></title></head><body><p>click here to visit the url: <a href="' + url + '">' + url + '<a/></p><p><a href="[unsubscribe]">Unsubscribe from this newsletter</a></p></body></html>',
-      plain_content: url + ' [unsubscribe]'
+      html_content: `<html><head><title></title></head><body><p>Here are this week's brochures.</p><ul>${brochureListHTMLString}</ul><p><a href="[unsubscribe]">Unsubscribe from this newsletter</a></p></body></html>`,
+      plain_content: plainContent + ' [unsubscribe]'
     }
   });
 
-  return SendGridService.API(request).then(function (response) {
+  return SendGridService.API(request).then(response => {
     logger.info('success creating new campaign', response);
     return response.body.id;
   });
-}
+};
 
-function activateCampaign(id) {
-  var request = SendGridService.emptyRequest({
+const activateCampaign = id => {
+  const request = SendGridService.emptyRequest({
     method: 'POST',
-    path: '/v3/campaigns/' + id + '/schedules/now'
+    path: `/v3/campaigns/${id}/schedules/now`
   });
 
-  logger.info('attempting to active campaign', { id: id });
+  logger.info('attempting to active campaign', { id });
 
-  return SendGridService.API(request).then(function (response) {
+  return SendGridService.API(request).then(response => {
     logger.info('success activating campaign', response);
     return process.exit(0);
   });
-}
+};
 
-module.exports = { createCampaignAndSend: createCampaignAndSend };
+const createCampaignAndSend = allBrochures => createCampaign(allBrochures).then(activateCampaign);
+
+module.exports = { createCampaignAndSend };
