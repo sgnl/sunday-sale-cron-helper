@@ -13,7 +13,7 @@ const createCampaign = allBrochures => {
   logger.info('building new campaign specifications');
 
   const brochureListHTMLString = allBrochures.map(brochure => {
-    return `<li><a href="${brochure.url}">${brochure.island} - ${brochure.url}</a></li>`
+    return `<li><a href="${brochure.url}">${brochure.island} - ${brochure.url}</a></li>`;
   }).join('');
 
   const plainContent = allBrochures.map(brochure => {
@@ -28,8 +28,8 @@ const createCampaign = allBrochures => {
       title: 'YOUR SUNDAY SALE TITLE',
       subject: 'Your Sunday Sale newletter has arrived!',
       sender_id: 98524,
-      list_ids: [787192], // debug
-      // list_ids: [787187],
+      // list_ids: [787192], // debug
+      list_ids: [787187],
       suppression_group_id: 1925,
       custom_unsubscribe_url: '',
       html_content: `<html><head><title></title></head><body><p>Here are this week's brochures.</p><ul>${brochureListHTMLString}</ul><p><a href="[unsubscribe]">Unsubscribe from this newsletter</a></p></body></html>`,
